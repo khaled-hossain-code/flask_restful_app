@@ -43,17 +43,18 @@ api.add_resource(ItemList, '/items')
 
 
 class Item(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('price',
+                        type=float,
+                        required=True,
+                        help="This field cannot be left blank!")
+
     def get(self, item_name):
         item = find_or_abort(item_name)
         return item, 200
 
     def put(self, item_name):
-        parser = reqparse.RequestParser()
-        parser.add_argument('price',
-                            type=float,
-                            required=True,
-                            help="This field cannot be left blank!")
-        data = request.parser.parse_args()
+        data = Item.parser.parse_args()
 
         item = find_item(item_name)
 
