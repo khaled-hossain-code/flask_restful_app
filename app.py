@@ -1,13 +1,16 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, abort
+from flask_jwt import JWT, jwt_required
+
+from security import authenticate, identity
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'super-secret'
 api = Api(app)
 
-items = [{
-    'name': 'item1',
-    'price': 299
-}]
+jwt = JWT(app, authenticate, identity)  # /auth
+
+items = []
 
 
 def find_or_abort(item_name):
@@ -23,6 +26,7 @@ def get_item(item_name):
 
 
 class ItemList(Resource):
+    @jwt_required()
     def get(self):
         return items
 
